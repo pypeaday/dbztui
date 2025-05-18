@@ -1,0 +1,96 @@
+Screen {
+    overflow: hidden hidden;
+}
+
+Header {
+    dock: top;
+    height: 1;
+    background: $accent;
+    color: $text;
+}
+
+Footer {
+    dock: bottom;
+    height: 1;
+    background: $accent;
+    color: $text;
+}
+
+#hover {
+    dock: right;
+    width: 50%;
+    height: 100%;
+    background: $panel;
+    color: $text;
+    display: none;
+}
+
+#hover.show {
+    display: block;
+}
+
+#hover.wide {
+    width: 70%;
+}
+
+#data-table {
+    width: 100%;
+    height: 100%;
+}
+
+#data-table.hover {
+    width: 50%;
+}
+
+#data-table.hover.wide {
+    width: 30%;
+}
+
+#command-input {
+    dock: bottom;
+    height: 1;
+    background: $panel;
+    color: $text;
+    display: none;
+}
+
+#command-input.show {
+    display: block;
+}
+
+.breadcrumb {
+    background: $accent-darken-1;
+    color: $text;
+    padding: 0 1;
+}
+
+.breadcrumb--highlight {
+    background: $accent;
+    color: $text;
+}
+
+.breadcrumb--separator {
+    background: $accent-darken-1;
+    color: $text;
+}
+
+DataTable {
+    background: $surface;
+    color: $text;
+}
+
+DataTable > .datatable--header {
+    background: $panel;
+    color: $text;
+}
+
+DataTable > .datatable--cursor {
+    background: $accent;
+    color: $text;
+}
+
+.hover-content {
+    background: $panel;
+    color: $text;
+    padding: 1;
+}
