@@ -18,7 +18,6 @@ import json
 import os
 
 BASE_URL = "https://dragonball-api.com/api/"
-LANGUAGE = "en"
 
 # Translation cache file
 CACHE_DIR = os.path.expanduser("~/.cache/dbztui")
@@ -88,15 +87,14 @@ class DBZResource(BaseModel):
             if hasattr(ctx, endpoint):
                 result = []
                 for url in getattr(ctx, endpoint):
-                    res = client.get(str(url), params={"language": LANGUAGE}).json()
+                    res = client.get(str(url)).json()
                     result.append(cls(**res))
                 return result
 
         url = f"{BASE_URL}{endpoint}"
-        params = {"language": LANGUAGE}
 
         results: List[T] = []
-        response = client.get(url, params=params)
+        response = client.get(url)
         response.raise_for_status()
         data = response.json()
         
@@ -107,10 +105,6 @@ class DBZResource(BaseModel):
             # Fetch all pages if needed
             while data.get("links", {}).get("next"):
                 next_url = data["links"]["next"]
-                # The next URL might already include language param, but we'll ensure it's there
-                if "language=" not in next_url:
-                    separator = "&" if "?" in next_url else "?"
-                    next_url = f"{next_url}{separator}language={LANGUAGE}"
                 response = client.get(next_url)
                 response.raise_for_status()
                 data = response.json()
@@ -129,7 +123,7 @@ class DBZResource(BaseModel):
         client = httpx.Client()
         endpoint = self.__class__.__name__.lower() + "s"
         url = f"{BASE_URL}{endpoint}/{self.id}"
-        response = client.get(url, params={"language": LANGUAGE})
+        response = client.get(url)
         response.raise_for_status()
         data = response.json()
         
@@ -164,7 +158,7 @@ class Character(DBZResource):
         client = httpx.Client()
         url = f"{BASE_URL}characters/{self.id}/transformations"
         try:
-            response = client.get(url, params={"language": LANGUAGE})
+            response = client.get(url)
             response.raise_for_status()
             data = response.json()
             if "items" in data:
@@ -181,6 +175,8 @@ class Transformation(DBZResource):
     ki: str
     characterId: int
     deletedAt: Optional[str] = None
+    
+    # Note: This is not a direct API endpoint, but accessed through character transformations
 
 
 class Planet(DBZResource):
@@ -196,32 +192,7 @@ class Planet(DBZResource):
         super().__init__(**data)
 
 
-class Saga(DBZResource):
-    name: str
-    description: str
-    image: Optional[HttpUrl] = None
-    chapters: Optional[List[int]] = None
-    deletedAt: Optional[str] = None
-    
-    def __init__(self, **data):
-        # Translate description before initializing
-        if "description" in data and data["description"]:
-            data["description"] = translate_text(data["description"])
-        super().__init__(**data)
-
-
-class Episode(DBZResource):
-    name: str
-    description: str
-    chapter: int
-    saga: str
-    deletedAt: Optional[str] = None
-    
-    def __init__(self, **data):
-        # Translate description before initializing
-        if "description" in data and data["description"]:
-            data["description"] = translate_text(data["description"])
-        super().__init__(**data)
+# Note: Saga and Episode models removed as they are not supported by the API
 
 
 commands = CommandSet(
@@ -233,31 +204,17 @@ commands = CommandSet(
             is_default=True,
         ),
         Command(
-            name="transformation",
-            aliases=["t"],
-            model=Transformation,
-        ),
-        Command(
             name="planet",
             aliases=["p"],
             model=Planet,
         ),
-        Command(
-            name="saga",
-            aliases=["s"],
-            model=Saga,
-        ),
-        Command(
-            name="episode",
-            aliases=["e"],
-            model=Episode,
-        ),
+        # Note: Transformation is not a direct API endpoint, but can be accessed through characters
     ]
 )
 
 metadata = {
     "title": "Dragon Ball Z Explorer",
-    "subtitle": "Use :character to list characters. Enter to drill in. Escape to go back/quit.",
+    "subtitle": "Use :character or :planet to explore. Enter to drill in. Escape to go back/quit.",
 }
 
 
