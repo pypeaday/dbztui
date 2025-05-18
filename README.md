@@ -1,31 +1,34 @@
 # Dragon Ball Z TUI
 
-A Terminal User Interface (TUI) application for exploring the Dragon Ball Z universe using the [Dragon Ball API](https://dragonball-api.com/api-docs).
+![Dragon Ball Z](https://dragonball-api.com/characters/goku_normal.webp)
 
-## Features
+## One Command to Run
 
-- Browse Dragon Ball Z characters, transformations, planets, sagas, and episodes
-- View detailed information about each resource
-- Navigate with keyboard shortcuts
-- Interactive terminal interface built with ninesui and Textual
+```bash
+uv run https://raw.githubusercontent.com/pypeaday/dbztui/refs/heads/main/apps/dbztui.py
+```
 
-`uv run https://raw.githubusercontent.com/pypeaday/dbztui/refs/heads/main/apps/dbztui.py`
+## What is it?
 
-### Keyboard Controls
+A Terminal User Interface (TUI) for exploring the Dragon Ball Z universe. Features include:
 
-- `:character` or `:c` - List all characters
-- `:transformation` or `:t` - List all transformations
-- `:planet` or `:p` - List all planets
-- `:saga` or `:s` - List all sagas
-- `:episode` or `:e` - List all episodes
-- `Enter` - Drill into selected item
-- `Escape` - Go back or quit
-- `h` - Toggle hover panel
-- `a` - Toggle wide layout
+- Browse characters, transformations, planets, sagas, and episodes
+- Automatic translation of Spanish content to English
+- Built with [ninesui](https://github.com/waylonwalker/ninesui) and powered by the [Dragon Ball API](https://dragonball-api.com/api-docs)
 
-## Data Source
+## Controls
 
-This application uses the [Dragon Ball API](https://dragonball-api.com/api-docs) to fetch information about the Dragon Ball Z universe.
+| Key | Action |
+|-----|--------|
+| `:character` or `:c` | List all characters |
+| `:transformation` or `:t` | List all transformations |
+| `:planet` or `:p` | List all planets |
+| `:saga` or `:s` | List all sagas |
+| `:episode` or `:e` | List all episodes |
+| `Enter` | Drill into selected item |
+| `Escape` | Go back or quit |
+| `h` | Toggle hover panel |
+| `a` | Toggle wide layout |
 
 ## License
 
