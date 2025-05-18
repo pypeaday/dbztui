@@ -1,28 +1,49 @@
+/* Dragon Ball Z Theme Colors */
+:root {
+    /* Main DBZ colors */
+    --dbz-orange: #ff9100;      /* Goku's gi */
+    --dbz-blue: #0066cc;        /* Vegeta's outfit */
+    --dbz-green: #00aa44;       /* Piccolo */
+    --dbz-yellow: #ffcc00;      /* Super Saiyan aura */
+    --dbz-red: #cc0000;         /* Power pole */
+    --dbz-purple: #6600cc;      /* Frieza's color */
+    --dbz-black: #111111;       /* Dark background */
+    --dbz-dark-blue: #001133;   /* Night sky */
+    --dbz-light-blue: #66ccff;  /* Ki blast */
+    --dbz-white: #f0f0f0;       /* Text color */
+}
+
 Screen {
     overflow: hidden hidden;
+    background: var(--dbz-dark-blue);
+    color: var(--dbz-white);
+    border: tall var(--dbz-orange);
 }
 
 Header {
     dock: top;
     height: 1;
-    background: $accent;
-    color: $text;
+    background: var(--dbz-orange);
+    color: var(--dbz-black);
+    font-weight: bold;
 }
 
 Footer {
     dock: bottom;
     height: 1;
-    background: $accent;
-    color: $text;
+    background: var(--dbz-orange);
+    color: var(--dbz-black);
+    font-weight: bold;
 }
 
 #hover {
     dock: right;
     width: 50%;
     height: 100%;
-    background: $panel;
-    color: $text;
+    background: var(--dbz-dark-blue);
+    color: var(--dbz-white);
     display: none;
+    border-left: outer var(--dbz-blue);
 }
 
 #hover.show {
@@ -49,9 +70,10 @@ Footer {
 #command-input {
     dock: bottom;
     height: 1;
-    background: $panel;
-    color: $text;
+    background: var(--dbz-blue);
+    color: var(--dbz-white);
     display: none;
+    border: tall var(--dbz-orange);
 }
 
 #command-input.show {
@@ -59,38 +81,65 @@ Footer {
 }
 
 .breadcrumb {
-    background: $accent-darken-1;
-    color: $text;
+    background: var(--dbz-blue);
+    color: var(--dbz-white);
     padding: 0 1;
 }
 
 .breadcrumb--highlight {
-    background: $accent;
-    color: $text;
+    background: var(--dbz-orange);
+    color: var(--dbz-black);
+    font-weight: bold;
 }
 
 .breadcrumb--separator {
-    background: $accent-darken-1;
-    color: $text;
+    background: var(--dbz-blue);
+    color: var(--dbz-yellow);
 }
 
 DataTable {
-    background: $surface;
-    color: $text;
+    background: var(--dbz-dark-blue);
+    color: var(--dbz-white);
+    border: none;
 }
 
 DataTable > .datatable--header {
-    background: $panel;
-    color: $text;
+    background: var(--dbz-blue);
+    color: var(--dbz-white);
+    font-weight: bold;
 }
 
 DataTable > .datatable--cursor {
-    background: $accent;
-    color: $text;
+    background: var(--dbz-orange);
+    color: var(--dbz-black);
+    font-weight: bold;
+}
+
+/* Alternate row styling */
+DataTable .datatable--row:nth-child(odd) {
+    background: rgba(0, 102, 204, 0.2); /* Transparent blue */
 }
 
 .hover-content {
-    background: $panel;
-    color: $text;
+    background: var(--dbz-dark-blue);
+    color: var(--dbz-white);
     padding: 1;
+    border: tall var(--dbz-blue);
+}
+
+/* Special styling for character names and important data */
+.character-name, .saga-name, .planet-name {
+    color: var(--dbz-yellow);
+    font-weight: bold;
+}
+
+/* Power level styling */
+.power-level {
+    color: var(--dbz-red);
+    font-weight: bold;
+}
+
+/* Description styling */
+.description {
+    color: var(--dbz-light-blue);
 }
