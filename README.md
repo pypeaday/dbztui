@@ -9,31 +9,7 @@ A Terminal User Interface (TUI) application for exploring the Dragon Ball Z univ
 - Navigate with keyboard shortcuts
 - Interactive terminal interface built with ninesui and Textual
 
-## Installation
-
-1. Clone the repository:
-```bash
-git clone https://github.com/yourusername/dbztui.git
-cd dbztui
-```
-
-2. Create a virtual environment:
-```bash
-python -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-```
-
-3. Install the dependencies:
-```bash
-pip install -e .
-```
-
-## Usage
-
-Run the application:
-```bash
-python apps/dbztui.py
-```
+`uv run https://raw.githubusercontent.com/pypeaday/dbztui/refs/heads/main/apps/dbztui.py`
 
 ### Keyboard Controls
 
