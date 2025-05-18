@@ -4,18 +4,72 @@
 # dependencies = [
 #     "ninesui @ git+https://github.com/waylonwalker/ninesui.git",
 #     "httpx",
+#     "deep-translator",
 # ]
 # ///
-from typing import Optional, List, TypeVar, ClassVar, Any
+from typing import Optional, List, TypeVar, ClassVar, Any, Dict
 from pydantic import BaseModel, Field, HttpUrl
 import httpx
 from textual import log
 from ninesui import CommandSet, Command, NinesUI
+from functools import lru_cache
+from deep_translator import GoogleTranslator
+import json
+import os
 
 BASE_URL = "https://dragonball-api.com/api/"
 LANGUAGE = "en"
 
+# Translation cache file
+CACHE_DIR = os.path.expanduser("~/.cache/dbztui")
+CACHE_FILE = os.path.join(CACHE_DIR, "translation_cache.json")
+
+# Create cache directory if it doesn't exist
+os.makedirs(CACHE_DIR, exist_ok=True)
+
+# Load translation cache from file
+translation_cache: Dict[str, str] = {}
+if os.path.exists(CACHE_FILE):
+    try:
+        with open(CACHE_FILE, "r", encoding="utf-8") as f:
+            translation_cache = json.load(f)
+    except Exception as e:
+        log(f"Error loading translation cache: {e}")
+
+# Initialize translator
+translator = GoogleTranslator(source='es', target='en')
+
 T = TypeVar("T", bound="DBZResource")
+
+@lru_cache(maxsize=1000)
+def translate_text(text: str) -> str:
+    """Translate text from Spanish to English with caching"""
+    if not text or len(text) < 5:  # Don't translate very short texts
+        return text
+        
+    # Check if translation is in cache
+    if text in translation_cache:
+        return translation_cache[text]
+    
+    try:
+        # Translate text
+        translated = translator.translate(text)
+        
+        # Save to cache
+        translation_cache[text] = translated
+        
+        # Periodically save cache to file
+        if len(translation_cache) % 10 == 0:  # Save every 10 new translations
+            try:
+                with open(CACHE_FILE, "w", encoding="utf-8") as f:
+                    json.dump(translation_cache, f, ensure_ascii=False, indent=2)
+            except Exception as e:
+                log(f"Error saving translation cache: {e}")
+                
+        return translated
+    except Exception as e:
+        log(f"Translation error: {e}")
+        return text  # Return original text if translation fails
 
 
 class DBZResource(BaseModel):
@@ -78,6 +132,11 @@ class DBZResource(BaseModel):
         response = client.get(url, params={"language": LANGUAGE})
         response.raise_for_status()
         data = response.json()
+        
+        # Translate description if present
+        if "description" in data and data["description"]:
+            data["description"] = translate_text(data["description"])
+            
         return self.__class__(**data)
 
 
@@ -91,6 +150,12 @@ class Character(DBZResource):
     image: Optional[HttpUrl] = None
     affiliation: str
     deletedAt: Optional[str] = None
+    
+    def __init__(self, **data):
+        # Translate description before initializing
+        if "description" in data and data["description"]:
+            data["description"] = translate_text(data["description"])
+        super().__init__(**data)
     
     nines_config: ClassVar[dict] = {"bindings": {"t": "get_transformations"}}
     
@@ -123,6 +188,12 @@ class Planet(DBZResource):
     description: str
     image: Optional[HttpUrl] = None
     deletedAt: Optional[str] = None
+    
+    def __init__(self, **data):
+        # Translate description before initializing
+        if "description" in data and data["description"]:
+            data["description"] = translate_text(data["description"])
+        super().__init__(**data)
 
 
 class Saga(DBZResource):
@@ -131,6 +202,12 @@ class Saga(DBZResource):
     image: Optional[HttpUrl] = None
     chapters: Optional[List[int]] = None
     deletedAt: Optional[str] = None
+    
+    def __init__(self, **data):
+        # Translate description before initializing
+        if "description" in data and data["description"]:
+            data["description"] = translate_text(data["description"])
+        super().__init__(**data)
 
 
 class Episode(DBZResource):
@@ -139,6 +216,12 @@ class Episode(DBZResource):
     chapter: int
     saga: str
     deletedAt: Optional[str] = None
+    
+    def __init__(self, **data):
+        # Translate description before initializing
+        if "description" in data and data["description"]:
+            data["description"] = translate_text(data["description"])
+        super().__init__(**data)
 
 
 commands = CommandSet(
@@ -180,4 +263,12 @@ metadata = {
 
 if __name__ == "__main__":
     ui = NinesUI(metadata=metadata, commands=commands)
-    ui.run()
+    try:
+        ui.run()
+    finally:
+        # Save translation cache when exiting
+        try:
+            with open(CACHE_FILE, "w", encoding="utf-8") as f:
+                json.dump(translation_cache, f, ensure_ascii=False, indent=2)
+        except Exception as e:
+            log(f"Error saving translation cache on exit: {e}")
